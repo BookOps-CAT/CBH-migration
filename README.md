@@ -24,19 +24,19 @@
 + holdings dump duplicates Z30 item record data - no need to worry about it (verify in all records file)
 + ask BC staff how their holdings/special notes in 5xx are recorded
 + can Z30-item tag subfields repeat?
-+ # of subfields in item rec:
-    12: 16843,
-    13: 14085,
-    11: 4878,
-    15: 2188,
-    14: 1722,
-    16: 88,
-    17: 68,
-    18: 46,
-    19: 32,
-    21: 10, - largest has 21 subfields
-    10: 5,  - smallest 5 subfields
-    20: 5
++ number of subfields in item rec:
+    + 12: 16843,
+    + 13: 14085,
+    + 11: 4878,
+    + 15: 2188,
+    + 14: 1722,
+    + 16: 88,
+    + 17: 68,
+    + 18: 46,
+    + 19: 32,
+    + 21: 10, - largest has 21 subfields
+    + 10: 5,  - smallest 5 subfields
+    + 20: 5
     what subfields reapeat?: $m
 
-    only 1 record has more than 2 $m: 001  000405547 (looks like error)
+    only 1 record has more than 2 $m: 001  000405547 (looks like error) - removed dup
