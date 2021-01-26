@@ -6,6 +6,7 @@
 + Analyze item record data for mapping to Sierra
 + Create an item record crosswalk from Aleph to Sierra
 + Investivate holdings records
++ remove finding aids records from the set after all manipulation is completed (load separately or consider refreshing metadata by a fresh export from ArchivesSpace); records can be identified by originally found 099 tag or Z30$B value "Archives - Manuscripts"
 
 ## Done
 + files preped in MarcEdit to enforce UTF-8 chr encoding
