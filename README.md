@@ -41,3 +41,9 @@
     what subfields reapeat?: $m
 
     only 1 record has more than 2 $m: 001  000405547 (looks like error) - removed dup
+
++ Training Sierra bib import tests:
+    + very long notes: b123708217
+    + caret in 007 tag: b112313929 (training server old load table overlaid existing bib based on 001 match)
+    + import of 590: b123708229 (accepted but highlighted as a mistake in red in bib display in Sierra)
+    + import of 699 tag: b123708230 (accepted but hightlighted as an error in bib display)
