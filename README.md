@@ -7,6 +7,8 @@
 + Create an item record crosswalk from Aleph to Sierra
 + Investivate holdings records
 + remove finding aids records from the set after all manipulation is completed (load separately or consider refreshing metadata by a fresh export from ArchivesSpace); records can be identified by originally found 099 tag or Z30$B value "Archives - Manuscripts"
++ analyze subject headings thesauri used by CBH and add to approved vocabularies in Sierra
++ create 099 based on item record (Z30) data
 
 ## Done
 + files preped in MarcEdit to enforce UTF-8 chr encoding
@@ -21,7 +23,7 @@
 ## Notes
 + control numbers - NYU/Aleph control number is an internal number while BPL uses OCLC number -> replace BHS 001 with OCLC # taken from 035$a (add prefix)
 + item record encoded in field Z30
-+ some BHS records include 099 field (remove!)
++ some BHS records include 099 field (these records include archival collection id in 099)
 + holdings dump duplicates Z30 item record data - no need to worry about it (verify in all records file)
 + ask BC staff how their holdings/special notes in 5xx are recorded
 + can Z30-item tag subfields repeat?
