@@ -85,6 +85,21 @@ def add_missing_001(marcfile):
             save2marc("../dump/kbhs_bib_all_20201016-utf8-t001.mrc", bib)
 
 
+def has_analytic_item(bib):
+    if bib.get_fields("LKR") != []:
+        return False
+    else:
+        return True
+
+
+def process_analytic_bibs(marc_fh):
+    with open(marc_fh, "rb") as marcfile:
+        reader = MARCReader(marcfile)
+        for bib in reader:
+            if has_analytic_item(bib):
+                print(bib["001"].data)
+
+
 if __name__ == "__main__":
     fh = "../dump/kbhs_bib_all_20201016-utf8.mrc"
     add_missing_001(fh)
