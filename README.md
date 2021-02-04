@@ -50,3 +50,5 @@
     + import of 590: b123708229 (accepted but highlighted as a mistake in red in bib display in Sierra)
     + import of 699 tag: b123708230 (accepted but hightlighted as an error in bib display)
     + import of 796 tag: b123708242 - tag rejected by load table (no mapping) - missing (move data to 700 to mitigate)
+
++ Records without call number: ['ocm12180664', 'ocm36531175', 'ocm24344329', 'ocm58769563', 'ocm36813841', 'on1027967459', 'ocm46243282', 'ocn480560395', 'ocm46547939', 'ocm30581624', 'ocm07164683', 'ocm08133824', 'cbh-000729']
