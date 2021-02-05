@@ -336,9 +336,75 @@ def add_item_records(marc_in, marc_out):
         print(no_call_ids)
 
 
+def find_related_bib(marc_src, aleph_control_no):
+    with open(marc_src, "rb") as marcfile:
+        reader = MARCReader(marcfile)
+        for bib in reader:
+            if aleph_control_no == bib["029"]["b"]:
+                return bib
+
+
+def construct_related_title(title_tag):
+    ind2 = int(title_tag.indicator2)
+    main_title = title_tag["a"][ind2:]
+    main_title = main_title.replace("/", "").replace(":", "").strip()
+    if main_title[-1] == ".":
+        main_title = main_title[:-1].strip()
+    first_letter = main_title[0].upper()
+    main_title = f"{first_letter}{main_title[1:]}"
+    return main_title
+
+
+def construct_publishing_data(bib):
+    if "260" in bib:
+        return bib["260"].value()
+    elif "264" in bib:
+        return bib["264"].value()
+    else:
+        return None
+
+
+def add_787_tag(bib, marc_src, marc_dst):
+    """
+    Creates relationship between analytic item records and "main" bibs using 787 tag
+    """
+    if has_related_bib(bib):
+        lkrs = bib.get_fields("LKR")
+        for lkr in lkrs:
+            aleph_control_no = lkr["b"]
+            related_bib = find_related_bib(marc_src, aleph_control_no)
+            if related_bib is not None:
+                subfields = []
+                related_author = related_bib.author()
+                if related_author is not None:
+                    subfields.extend(["a", related_author])
+                related_title = construct_related_title(related_bib["245"])
+                subfields.extend(["t", related_title])
+                publishing_data = construct_publishing_data(bib)
+                if publishing_data:
+                    subfields.extend(["d", publishing_data])
+                subfields.extend(["w", related_bib["001"].data])
+                t787 = Field(tag="787", indicators=["1", " "], subfields=subfields)
+                bib.add_ordered_field(t787)
+
+            else:
+                print(f"Error: unable to find aleph control no: {aleph_control_no}")
+
+        bib.remove_fields("LKR")
+        save2marc(marc_dst, bib)
+    else:
+        # simply save record as is
+        save2marc(marc_dst, bib)
+
+
 if __name__ == "__main__":
     src = "../dump/kbhs_bib_all_20201016-utf8.mrc"
-    out = "../dump/kbhs_bib_all_20201016-utf8_call-item.mrc"
+    out = "../dump/kbhs_bib_all_20201016-utf8_related.mrc"
     # add_missing_001(fh)
     # process_analytic_bibs(fh)
-    add_item_records(src, out)
+    # add_item_records(src, out)
+
+    with open(src, "rb") as marcfile:
+        reader = MARCReader(marcfile)
+        for bib in reader:
+            add_787_tag(bib, src, out)
