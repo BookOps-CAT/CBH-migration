@@ -85,6 +85,39 @@ def add_missing_001(marcfile):
             save2marc("../dump/kbhs_bib_all_20201016-utf8-t001.mrc", bib)
 
 
+def has_oclc_controlNo(bib):
+    """
+    identifies if 001 is oclc control number or not
+    """
+    controlNo = bib["001"].data
+    if "ocn" in controlNo or "ocm" in controlNo or "on" in controlNo:
+        return True
+    else:
+        return False
+
+
+def remove_oclc_prefix_from_035(marcfile):
+    with open(marcfile, "rb") as file:
+        reader = MARCReader(file)
+        manip_count = 0
+        for bib in reader:
+            t035 = bib.get_fields("035")
+            for t in t035:
+                value = None
+                if "a" in t:
+                    if "(OCoLC)" in t["a"]:
+                        # print("trigger")
+                        if "ocm" in t["a"].lower() or "ocn" in t["a"].lower():
+                            manip_count += 1
+                            value = t["a"][10:]
+                            bib[""]
+                        elif "on" in t["a"].lower():
+                            manip_count += 1
+                            value = t["a"][9:]
+                            print(f"{value}-{bib['029']['b']}")
+        print(f"Finished fixing {manip_count} bibs.")
+
+
 def has_related_bib(bib):
     if bib.get_fields("LKR") == []:
         return False
