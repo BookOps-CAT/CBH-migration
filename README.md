@@ -4,16 +4,17 @@
 
 ## To-do
 + Analyze item record data for mapping to Sierra
-+ Create an item record crosswalk from Aleph to Sierra
-+ Investivate holdings records
 + remove finding aids records from the set after all manipulation is completed (load separately or consider refreshing metadata by a fresh export from ArchivesSpace); records can be identified by originally found 099 tag or Z30$B value "Archives - Manuscripts"
 + analyze subject headings thesauri used by CBH and add to approved vocabularies in Sierra
-+ create 099 based on item record (Z30) data
++ new Sierra load table always inserting bibs with robust item mapping (item note (2) and v - volume) and active command line
++ move data from $j $g to internal note (2) variable field
+
 
 ## Done
 + files preped in MarcEdit to enforce UTF-8 chr encoding
-
-
++ bibliographic data manipulations
++ linking related records
++ item data crosswalk (partial)
 
 ## References
 + [MARC21 Bibliographic Data](https://www.loc.gov/marc/bibliographic/)
@@ -52,3 +53,7 @@
     + import of 796 tag: b123708242 - tag rejected by load table (no mapping) - missing (move data to 700 to mitigate)
 
 + Records without call number: ['ocm12180664', 'ocm36531175', 'ocm24344329', 'ocm58769563', 'ocm36813841', 'on1027967459', 'ocm46243282', 'ocn480560395', 'ocm46547939', 'ocm30581624', 'ocm07164683', 'ocm08133824', 'cbh-000729']
+
++ Sierra import: none of the existing load table have adequate mapping to support lossless transfer. Problematic data: volume statement (960$v does not work), aleph's call number (holding fields $h$i$j$k$m), note (optimally this should internal note (2) - analytic item flag + various other notes)
+
++ Aleph's holdings records do not carry any useful for Sierra data
