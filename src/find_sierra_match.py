@@ -35,14 +35,23 @@ def parse_response(response, control_no):
         if hits > 0:
             doc = jres["response"]["docs"][0]
             title = doc["title"]
-            author = doc["author_raw"]
+            try:
+                author = doc["author_raw"]
+            except KeyError:
+                author = ""
             matType = doc["material_type"]
-            callNumber = doc["call_number"]
+            try:
+                callNumber = doc["call_number"]
+            except KeyError:
+                callNumber = ""
             try:
                 isbn = ",".join(doc["isbn"])
             except KeyError:
                 isbn = ""
-            publisher = doc["publisher"]
+            try:
+                publisher = doc["publisher"]
+            except KeyError:
+                publisher = ""
             bid = f"b{doc['id']}a"
 
             save2csv(
