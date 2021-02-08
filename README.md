@@ -8,7 +8,8 @@
 + analyze subject headings thesauri used by CBH and add to approved vocabularies in Sierra
 + new Sierra load table always inserting bibs with robust item mapping (item note (2) and v - volume) and active command line
 + move data from $j $g to internal note (2) variable field
-
++ remove duplicated 099 (the tag was already present) from finding aids
++ linking 787 tag in analytic records has invalid publication date (not taken from main) - correct!
 
 ## Done
 + files preped in MarcEdit to enforce UTF-8 chr encoding
