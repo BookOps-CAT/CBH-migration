@@ -44,6 +44,22 @@ def make_isbns_request(isbns, client_id, endpoint):
         return response
 
 
+def make_lccn_request(lccn, client_id, endpoint):
+    """
+    returns author, title, publication, and Sierra bib number
+    """
+
+    with SolrSession(authorization=client_id, endpoint=endpoint) as session:
+        payload = {
+            "q": f'ss_marc_tag_010_a:{lccn} AND collection:"Brooklyn Collection"',
+            "fq": "ss_type:catalog",
+            "start": 0,
+            "rows": 5,
+        }
+        response = session._send_request(payload=payload)
+        return response
+
+
 def parse_response(response, control_no):
     print(f"{response.url} = {response.status_code}")
     if response.status_code == 200:
@@ -72,7 +88,7 @@ def parse_response(response, control_no):
             bid = f"b{doc['id']}a"
 
             save2csv(
-                "../dump/oclc-match.csv",
+                "../dump/dups.csv",
                 [
                     control_no,
                     bid,
@@ -86,7 +102,7 @@ def parse_response(response, control_no):
                 ],
             )
         else:
-            save2csv("../dump/oclc-no-match.csv", [control_no])
+            save2csv("../dump/lccn-no-match.csv", [control_no])
 
     else:
         print(f"Error on {control_no}. Status code {response.status_code}")
@@ -132,8 +148,29 @@ def query_isbns(isbn_fh):
             #     break
 
 
+def query_lccn(lccn_fh):
+    creds_fh = os.path.join(os.environ["USERPROFILE"], ".bpl-solr/bpl-solr-prod.json")
+    with open(creds_fh, "r") as credfile:
+        cred = json.load(credfile)
+    with open(lccn_fh, "r") as csvfile:
+        reader = csv.reader(csvfile)
+        i = 0
+        for r in reader:
+            i += 1
+            control_no = r[0]
+            lccn = r[1]
+            res = make_lccn_request(lccn, cred["client_key"], cred["endpoint"])
+            parse_response(res, control_no)
+            time.sleep(0.5)
+
+            # if i >= 5:
+            #     break
+
+
 if __name__ == "__main__":
     # fh = "../dump/oclc-controlNos.csv"
     # query_control_nos(fh)
-    fh = "../dump/isbns_prepped.csv"
-    query_isbns(fh)
+    # fh = "../dump/isbns_prepped.csv"
+    # query_isbns(fh)
+    fh = "../dump/lccn.csv"
+    query_lccn(fh)
