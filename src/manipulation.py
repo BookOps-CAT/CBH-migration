@@ -429,39 +429,41 @@ def add_949_command_line(marc_src, marc_dst):
                 bibformat = "h"
 
             command_tag = Field(
-                tag="949", indicators=[" ", " "], subfields=["a", f"*b2={bibformat};bn=91;"]
+                tag="949",
+                indicators=[" ", " "],
+                subfields=["a", f"*b2={bibformat};bn=91;"],
             )
             bib.add_ordered_field(command_tag)
             save2marc(marc_dst, bib)
 
 
-def populate_internal_note(marc_src, marc_dst):
-    """
-    Fixes carried over data from Aleph that is not mapped correctly by Sierra load table.
-    This elements were previously recorded in $j and $g, will be moved into $n ($x in Sierra).
-    """
-    with open(marc_src, "rb") as marcfile:
-        reader = MARCReader(marcfile)
-        for bib in reader:
-            items = bib.get_fields("960")
-            for item in items:
-                subJ = None
-                subG = None
-                subN = None
-                if "j" in item:
-                    subJ = item["j"]
-                if "g" in item:
-                    subG = item["g"]
-                if "n" in item:
-                    subN = item["n"]
-                if any(subJ, subG, subN):
-                    item["n"] = 
+# def populate_internal_note(marc_src, marc_dst):
+#     """
+#     Fixes carried over data from Aleph that is not mapped correctly by Sierra load table.
+#     This elements were previously recorded in $j and $g, will be moved into $n ($x in Sierra).
+#     """
+#     with open(marc_src, "rb") as marcfile:
+#         reader = MARCReader(marcfile)
+#         for bib in reader:
+#             items = bib.get_fields("960")
+#             for item in items:
+#                 subJ = None
+#                 subG = None
+#                 subN = None
+#                 if "j" in item:
+#                     subJ = item["j"]
+#                 if "g" in item:
+#                     subG = item["g"]
+#                 if "n" in item:
+#                     subN = item["n"]
+#                 if any(subJ, subG, subN):
+#                     item["n"] =
 
 
 if __name__ == "__main__":
     src = "../dump/kbhs_bib_all_20201016-utf8.mrc"
     out = "../dump/kbhs_bib_all_20201016-utf8_command_tag.mrc"
-    # add_missing_001(fh)
+    add_missing_001(src)
     # process_analytic_bibs(fh)
     # add_item_records(src, out)
 
@@ -470,4 +472,4 @@ if __name__ == "__main__":
     #     for bib in reader:
     #         add_787_tag(bib, src, out)
 
-    add_949_command_line(src, out)
+    # add_949_command_line(src, out)
