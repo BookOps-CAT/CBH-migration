@@ -5,6 +5,7 @@ MARC manipulation functions
 
 from pymarc import MARCReader, Field
 import os
+import re
 
 
 def save2marc(dst_fh, bib):
@@ -455,17 +456,107 @@ def determine_item_format(bib_format):
 def add_item_format(src, out):
     with open(src, "rb") as marcfile:
         reader = MARCReader(marcfile)
-        n = 0
         for bib in reader:
-            n += 1
             bib_format = bib["949"]["a"][4]
             item_format = determine_item_format(bib_format)
             for i in bib.get_fields("960"):
                 i.add_subfield("r", item_format)
             save2marc(out, bib)
-            # print(bib)
-            # if n > 5:
-            #     break
+
+
+def normalize_call(g):
+    """
+    ‡hG1253.S8‡iH33 1972‡mMAP
+    """
+    elems = [e for e in g.split("‡") if e]
+    first = None
+    second = None
+    alternative = None
+    for e in elems:
+        if e[0] == "h":
+            first = e[1:].strip()
+        elif e[0] == "i":
+            second = e[1:].strip()
+        elif e[0] == "j":
+            alternative = e[1:].strip()
+
+    if alternative:
+        return alternative
+    elif first:
+        return f"{first} {second}"
+    else:
+        return None
+
+
+def item_call_numbers(src, out):
+    with open(src, "rb") as marcfile:
+        reader = MARCReader(marcfile)
+        for bib in reader:
+            for i in bib.get_fields("960"):
+                for g in i.get_subfields("g"):
+                    v = normalize_call(g)
+                    if v:
+                        i.add_subfield("y", v)
+                        break
+            i.delete_subfield("g")
+            save2marc(out, bib)
+
+
+def opac_msg_4_folios(src, out):
+    with open(src, "rb") as marcfile:
+        reader = MARCReader(marcfile)
+        n = 0
+        for bib in reader:
+            for i in bib.get_fields("960"):
+                if "g" in i:
+                    s = i["g"]
+                    if "‡kfolio" in s.lower():
+                        n += 1
+                        i["o"] = "q"
+            save2marc(out, bib)
+
+
+def has_invalid_last_chr(sub):
+    pattern = re.compile(r".*[\s.,;:/]$")
+    if pattern.match(sub):
+        return True
+    else:
+        return False
+
+
+def norm_title_subfield(sub):
+    while has_invalid_last_chr(sub):
+        sub = sub[:-1]
+    return f"{sub}"
+
+
+def is_serial(bib):
+    bib_format = bib["949"]["a"][4]
+    if bib_format == "q":
+        return True
+    else:
+        return False
+
+
+def construct_299_field(t245):
+    sidx = int(t245.indicator2)
+    value = t245["a"][sidx:]
+    value = f"{value[0].upper()}{value[1:]}"
+    value = norm_title_subfield(value)
+    return Field(tag="299", indicators=[" ", " "], subfields=["a", value])
+
+
+def add_299_tag(src, out):
+    with open(src, "rb") as marcfile:
+        reader = MARCReader(marcfile)
+        for bib in reader:
+            if is_serial(bib):
+                print(bib["001"])
+                t299 = construct_299_field(bib["245"])
+                print(t299)
+                bib.add_ordered_field(t299)
+
+            save2marc(out, bib)
 
 
 # def populate_internal_note(marc_src, marc_dst):
@@ -493,7 +584,7 @@ def add_item_format(src, out):
 
 if __name__ == "__main__":
     src = "../dump/kbhs_bib_all_20201016-utf8.mrc"
-    out = "../dump/kbhs_bib_all_20201016-utf8-item_format_fix.mrc"
+    out = "../dump/kbhs_bib_all_20201016-utf8-299tag.mrc"
     # out = "../dump/kbhs_bib_all_20201016-utf8_command_tag.mrc"
     # add_missing_001(src)
     # process_analytic_bibs(fh)
@@ -505,4 +596,8 @@ if __name__ == "__main__":
     #         add_787_tag(bib, src, out)
 
     # add_949_command_line(src, out)
-    add_item_format(src, out)
+    # add_item_format(src, out)
+    # opac_msg_4_folios(src, out)
+
+    # item_call_numbers(src, out)
+    add_299_tag(src, out)
