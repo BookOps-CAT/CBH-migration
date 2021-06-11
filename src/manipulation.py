@@ -437,6 +437,37 @@ def add_949_command_line(marc_src, marc_dst):
             save2marc(marc_dst, bib)
 
 
+def determine_item_format(bib_format):
+    if bib_format == "a":
+        return "a"
+    elif bib_format in ("nepc"):
+        return "i"
+    elif bib_format == "q":
+        return "f"
+    elif bib_format == "x":
+        return "1"
+    elif bib_format in ("ihv"):
+        return "d"
+    else:
+        print(bib_format)
+
+
+def add_item_format(src, out):
+    with open(src, "rb") as marcfile:
+        reader = MARCReader(marcfile)
+        n = 0
+        for bib in reader:
+            n += 1
+            bib_format = bib["949"]["a"][4]
+            item_format = determine_item_format(bib_format)
+            for i in bib.get_fields("960"):
+                i.add_subfield("r", item_format)
+            save2marc(out, bib)
+            # print(bib)
+            # if n > 5:
+            #     break
+
+
 # def populate_internal_note(marc_src, marc_dst):
 #     """
 #     Fixes carried over data from Aleph that is not mapped correctly by Sierra load table.
@@ -462,8 +493,9 @@ def add_949_command_line(marc_src, marc_dst):
 
 if __name__ == "__main__":
     src = "../dump/kbhs_bib_all_20201016-utf8.mrc"
-    out = "../dump/kbhs_bib_all_20201016-utf8_command_tag.mrc"
-    add_missing_001(src)
+    out = "../dump/kbhs_bib_all_20201016-utf8-item_format_fix.mrc"
+    # out = "../dump/kbhs_bib_all_20201016-utf8_command_tag.mrc"
+    # add_missing_001(src)
     # process_analytic_bibs(fh)
     # add_item_records(src, out)
 
@@ -473,3 +505,4 @@ if __name__ == "__main__":
     #         add_787_tag(bib, src, out)
 
     # add_949_command_line(src, out)
+    add_item_format(src, out)
