@@ -398,6 +398,41 @@ def add_787_tag(bib, marc_src, marc_dst):
         save2marc(marc_dst, bib)
 
 
+def find_related_bib_on_control_no(src, control_no):
+    with open(src, "rb") as file:
+        reader = MARCReader(file)
+        for bib in reader:
+            if control_no == bib["001"].data:
+                return bib
+
+
+def has_787_tag(bib):
+    if "787" in bib:
+        return True
+    else:
+        return False
+
+
+def fix_787_pub_data(src, dst):
+    with open(src, "rb") as srcmarc:
+        reader = MARCReader(srcmarc)
+        for bib in reader:
+            if has_787_tag(bib):
+                for field in bib.get_fields("787"):
+                    related_control_no = field["w"]
+                    related_bib = find_related_bib_on_control_no(
+                        src, related_control_no
+                    )
+                    pub_data = construct_publishing_data(related_bib)
+                    try:
+                        field["d"] = pub_data
+                    except KeyError:
+                        pass
+                    # field.add_subfield("d", "NEW DATA")
+                # print(bib)
+            save2marc(dst, bib)
+
+
 def add_949_command_line(marc_src, marc_dst):
     with open(marc_src, "rb") as marcfile:
         reader = MARCReader(marcfile)
@@ -583,8 +618,8 @@ def add_299_tag(src, out):
 
 
 if __name__ == "__main__":
-    src = "../dump/kbhs_bib_all_20201016-utf8.mrc"
-    out = "../dump/kbhs_bib_all_20201016-utf8-299tag.mrc"
+    src = "../dump/cbh-bibs-migration.mrc"
+    out = "../dump/cbh-bibs-migration-787_fix.mrc"
     # out = "../dump/kbhs_bib_all_20201016-utf8_command_tag.mrc"
     # add_missing_001(src)
     # process_analytic_bibs(fh)
@@ -600,4 +635,5 @@ if __name__ == "__main__":
     # opac_msg_4_folios(src, out)
 
     # item_call_numbers(src, out)
-    add_299_tag(src, out)
+    # add_299_tag(src, out)
+    fix_787_pub_data(src, out)

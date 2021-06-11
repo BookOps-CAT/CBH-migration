@@ -3,12 +3,12 @@
 
 
 ## To-do
-+ Analyze item record data for mapping to Sierra
-+ remove finding aids records from the set after all manipulation is completed (load separately or consider refreshing metadata by a fresh export from ArchivesSpace); records can be identified by originally found 099 tag or Z30$B value "Archives - Manuscripts"
++ ~~Analyze item record data for mapping to Sierra~~
++ ~~remove finding aids records from the set after all manipulation is completed (load separately or consider refreshing metadata by a fresh export from ArchivesSpace); records can be identified by originally found 099 tag or Z30$B value "Archives - Manuscripts"~~
 + analyze subject headings thesauri used by CBH and add to approved vocabularies in Sierra
-+ new Sierra load table always inserting bibs with robust item mapping (item note (2) and v - volume) and active command line
-+ move data from $j $g to internal note (2) variable field
-+ remove duplicated 099 (the tag was already present) from finding aids
++ ~~new Sierra load table always inserting bibs with robust item mapping (item note (2) and c - volume) and active command line~~
++ ~~move data from $j $g to internal note (2) variable field~~
++ ~~remove duplicated 099 (the tag was already present) from finding aids~~
 + linking 787 tag in analytic records has invalid publication date (not taken from main) - correct!
 + linking 787 $w should have a proper format
 
