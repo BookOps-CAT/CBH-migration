@@ -423,11 +423,12 @@ def fix_787_pub_data(src, dst):
                     related_bib = find_related_bib_on_control_no(
                         src, related_control_no
                     )
-                    pub_data = construct_publishing_data(related_bib)
-                    try:
-                        field["d"] = pub_data
-                    except KeyError:
-                        pass
+                    if related_bib is not None:
+                        pub_data = construct_publishing_data(related_bib)
+                        try:
+                            field["d"] = pub_data
+                        except KeyError:
+                            pass
                     # field.add_subfield("d", "NEW DATA")
                 # print(bib)
             save2marc(dst, bib)
