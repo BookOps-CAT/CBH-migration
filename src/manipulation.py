@@ -429,6 +429,8 @@ def fix_787_pub_data(src, dst):
                             field["d"] = pub_data
                         except KeyError:
                             pass
+                    else:
+                        print(f"Not able to find related for {bib['001']}")
                     # field.add_subfield("d", "NEW DATA")
                 # print(bib)
             save2marc(dst, bib)
@@ -593,29 +595,6 @@ def add_299_tag(src, out):
                 bib.add_ordered_field(t299)
 
             save2marc(out, bib)
-
-
-# def populate_internal_note(marc_src, marc_dst):
-#     """
-#     Fixes carried over data from Aleph that is not mapped correctly by Sierra load table.
-#     This elements were previously recorded in $j and $g, will be moved into $n ($x in Sierra).
-#     """
-#     with open(marc_src, "rb") as marcfile:
-#         reader = MARCReader(marcfile)
-#         for bib in reader:
-#             items = bib.get_fields("960")
-#             for item in items:
-#                 subJ = None
-#                 subG = None
-#                 subN = None
-#                 if "j" in item:
-#                     subJ = item["j"]
-#                 if "g" in item:
-#                     subG = item["g"]
-#                 if "n" in item:
-#                     subN = item["n"]
-#                 if any(subJ, subG, subN):
-#                     item["n"] =
 
 
 if __name__ == "__main__":
